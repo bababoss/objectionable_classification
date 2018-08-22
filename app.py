@@ -4,6 +4,7 @@ import io
 import json
 import requests
 import time
+import inference
 
  
 # initialize our Flask application and Redis server
@@ -30,11 +31,13 @@ def predict():
 
     req_data=request.get_json()
     text_data  = req_data["text"].encode('utf-8')
-    output_data={"text_data":text_data}
-    response=jsonify(output_data)   
-    response.status_code=200
+    result=inference.prediction_run(text_data)
+    print("result:",type(result),result)
+#     output_data={"prediction":result}
+#     response=jsonify(json.dumps(result))   
+#     response.status_code=200
     #return the data dictionary as a JSON response
-    return response#flask.jsonify(output_data)
+    return flask.jsonify(str(result))
 
 
 
@@ -48,7 +51,8 @@ def api():
         req_data=request.get_json()
         text_data  = req_data["text"].encode('utf-8')
 
-        output_data={"text_data":text_data}
+        result=inference.prediction_run(text_data)
+        output_data={"prediction":result}
 
         # jsonify and send response
         # also set status code
